@@ -5,10 +5,11 @@
 
 ## Tokens
 ```js
-WHITES = /\S/;
-STRING = /^"([^"]*)"/;
-NUMBER = /^\d+\b/;
-WORD   = /^[^\s(),#"]+/;
+WHITES   = /\S/;
+COMMENTS = /#.*(\n|\r)?/;
+STRING   = /^"([^"]*)"/;
+NUMBER   = /^\d+\b/;
+WORD     = /^[^\s(),#"]+/;
 ```
 
 ## Syntax
