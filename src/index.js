@@ -4,6 +4,11 @@ function skipSpace(string) {
   return string.slice(first);
 }
 
+function skipComments(string) {
+  // Replaces comment with nothing, also line terminator if there is one
+  return string.replace(/#.*(\n|\r)?/, ''); 
+}
+
 function parseApply(expr, program) {
   program = skipSpace(program);
   if (program[0] != "(") {
@@ -26,7 +31,12 @@ function parseApply(expr, program) {
 }
 
 function parseExpression(program) {
-  program = skipSpace(program);
+  let comparator;
+  // Skip comments and spaces until there is no more
+  while (comparator !== program) {
+    comparator = program;
+    program = skipComments(skipSpace(program));
+  }
   let match, expr;
   if (match = /^"([^"]*)"/.exec(program)) {
     expr = {type: "value", value: match[1]};
@@ -160,8 +170,6 @@ function run(program) {
 }
 
 // console.log(parse("+(a, 10)"));
-//let prog = parse(`if(true, false, true)`);
-//console.log(evaluate(prog, topScope));
 
 // Fast tests || TODO: Remove and add mocha tests
 run(`
@@ -185,3 +193,12 @@ do(define(pow, fun(base, exp,
         *(base, pow(base, -(exp, 1)))))),
    print(pow(2, 10)))
 `);
+
+// COMMENTS TEST
+console.log(parse("# hello\nx"));
+// → {type: "word", name: "x"}
+
+console.log(parse("a # one\n   # two\n()"));
+// → {type: "apply",
+//    operator: {type: "word", name: "a"},
+//    args: []}
