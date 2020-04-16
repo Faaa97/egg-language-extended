@@ -5,17 +5,15 @@
 
 ## Tokens
 ```js
-WHITES = /(\s|[#;].*|\/\*(.|\n)*?\*\/)*/;
-STRING = /"((?:[^"\\]|\\.)*)"/;
-NUMBER = /([-+]?\d*\.?\d+([eE][-+]?\d+)?)/;
-WORD   = /([^\s(),"]+)/;
+WHITES = /\S/;
+STRING = /^"([^"]*)"/;
+NUMBER = /^\d+\b/;
+WORD   = /^[^\s(),#"]+/;
 ```
 
 ## Syntax
 ```js
-expression: STRING
-          | NUMBER
-          | WORD apply 
+expression: ( STRING | NUMBER | WORD ) apply 
 
 apply: /* vacio */
      | '(' (expression ',')* expression? ')' apply
