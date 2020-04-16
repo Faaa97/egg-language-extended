@@ -125,6 +125,25 @@ specialForms.fun = (args, scope) => {
   };
 };
 
+specialForms.set = (args, scope) => {
+  if (args.length !== 2 || args[0].type !== "word") {
+    throw new SyntaxError("Incorrect use of set");
+
+  }
+  let currentScope = scope;
+  while(currentScope !== null) {
+    if(Object.prototype.hasOwnProperty.call(currentScope, args[0].name)) {
+      let value = evaluate(args[1], scope); // Evaluate args[1] in original scope for set call
+      currentScope[args[0].name] = value; // Update binding in its scope
+      return value;
+    } else {
+      currentScope = Object.getPrototypeOf(currentScope);
+    }
+  }
+  // If we get to here, we didn't find any scope for args[0] binding
+  throw new ReferenceError("Binding not defined");
+};
+
 function evaluate(expr, scope) {
   if (expr.type == "value") {
     return expr.value;
@@ -202,3 +221,14 @@ console.log(parse("a # one\n   # two\n()"));
 // → {type: "apply",
 //    operator: {type: "word", name: "a"},
 //    args: []}
+
+// SCOPE TEST
+run(`
+do(define(x, 4),
+   define(setx, fun(val, set(x, val))),
+   setx(50),
+   print(x))
+`);
+// → 50
+/* run(`set(quux, true)`); */
+// → Some kind of ReferenceError
