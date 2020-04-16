@@ -91,6 +91,30 @@ specialForms.define = (args, scope) => {
   return value;
 };
 
+specialForms.fun = (args, scope) => {
+  if (!args.length) {
+    throw new SyntaxError("Functions need a body");
+  }
+  let body = args[args.length - 1];
+  let params = args.slice(0, args.length - 1).map(expr => {
+    if (expr.type != "word") {
+      throw new SyntaxError("Parameter names must be words");
+    }
+    return expr.name;
+  });
+
+  return function() {
+    if (arguments.length != params.length) {
+      throw new TypeError("Wrong number of arguments");
+    }
+    let localScope = Object.create(scope);
+    for (let i = 0; i < arguments.length; i++) {
+      localScope[params[i]] = arguments[i];
+    }
+    return evaluate(body, localScope);
+  };
+};
+
 function evaluate(expr, scope) {
   if (expr.type == "value") {
     return expr.value;
@@ -117,4 +141,47 @@ function evaluate(expr, scope) {
   }
 }
 
+function run(program) {
+  const topScope = Object.create(null);
+
+  topScope.true = true;
+  topScope.false = false;
+
+  for (let op of ["+", "-", "*", "/", "==", "<", ">"]) {
+    topScope[op] = Function("a, b", `return a ${op} b;`);
+  }
+
+  topScope.print = value => {
+    console.log(value);
+    return value;
+  };
+
+  return evaluate(parse(program), Object.create(topScope));
+}
+
 // console.log(parse("+(a, 10)"));
+//let prog = parse(`if(true, false, true)`);
+//console.log(evaluate(prog, topScope));
+
+// Fast tests || TODO: Remove and add mocha tests
+run(`
+do(define(total, 0),
+   define(count, 1),
+   while(<(count, 11),
+         do(define(total, +(total, count)),
+            define(count, +(count, 1)))),
+   print(total))
+`);
+
+run(`
+do(define(plusOne, fun(a, +(a, 1))),
+   print(plusOne(10)))
+`);
+
+run(`
+do(define(pow, fun(base, exp,
+     if(==(exp, 0),
+        1,
+        *(base, pow(base, -(exp, 1)))))),
+   print(pow(2, 10)))
+`);
