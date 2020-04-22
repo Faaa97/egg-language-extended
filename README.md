@@ -6,7 +6,7 @@
 ## Tokens
 ```js
 WHITES   = /\S/;
-COMMENTS = /#.*(\n|\r)?/;
+COMMENTS = /^#.*(\n|\r)?/;
 STRING   = /^"([^"]*)"/;
 NUMBER   = /^\d+\b/;
 WORD     = /^[^\s(),#"]+/;
@@ -14,7 +14,9 @@ WORD     = /^[^\s(),#"]+/;
 
 ## Syntax
 ```js
-expression: ( STRING | NUMBER | WORD ) apply 
+expression: STRING 
+          | NUMBER 
+          | WORD apply 
 
 apply: /* vacio */
      | '(' (expression ',')* expression? ')' apply
