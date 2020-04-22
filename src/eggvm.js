@@ -1,3 +1,5 @@
+let parse = require('./parse.js').parse;
+
 const specialForms = Object.create(null);
 
 specialForms.if = (args, scope) => {
@@ -110,6 +112,11 @@ function evaluate(expr, scope) {
 }
 
 function run(program) {
+  const ast = parse(program);
+  return runFromEVM(ast);
+}
+
+function runFromEVM(ast) {
   const topScope = Object.create(null);
 
   topScope.true = true;
@@ -124,13 +131,13 @@ function run(program) {
     return value;
   };
 
-  return evaluate(parse(program), Object.create(topScope));
+  return evaluate(ast, Object.create(topScope));
 }
 
 module.exports = {
   run, 
   // runFromFile, // TODO: Make runFromFile
-  // runFromEVM,  // TODO: Make runFromEVM
+  runFromEVM,
   // topEnv,      // TopEnv?
   specialForms, 
   // parser,      // parser?
