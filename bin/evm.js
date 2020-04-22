@@ -1,7 +1,9 @@
 const program = require('commander');
-const {version, description} = require('../package.json');
+const {version} = require('../package.json');
 const runFromEVM = require('../src/eggvm.js').runFromEVM;
 const fs = require('fs');
+
+const description = 'Egg interpreter. Load a .evm file to run';
 
 program
     .version(version)

@@ -1,7 +1,9 @@
 const program = require('commander');
-const {version, description} = require('../package.json');
+const {version} = require('../package.json');
 const runEGG = require('../src/eggvm.js').run;
 const fs = require('fs');
+
+const description = 'Egg parser and interpreter. Load a .egg file to run';
 
 program
     .version(version)

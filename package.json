@@ -1,7 +1,7 @@
 {
   "name": "p5-t1-egg-0-alu0100969535",
   "version": "0.0.0",
-  "description": "",
+  "description": "Project that defines EGG language, parser and interpreter.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
