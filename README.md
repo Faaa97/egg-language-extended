@@ -1,5 +1,16 @@
 # p5-t1-egg-0-alu0100969535 <!-- omit in toc -->
 
+![](https://github.com/ULL-ESIT-PL-1920/p5-t1-egg-0-alu0100969535/workflows/GitHub%20Classroom%20Workflow/badge.svg)
+
+- [EGG Language](#egg-language)
+  - [Tokens](#tokens)
+  - [Syntax](#syntax)
+- [How to use](#how-to-use)
+  - [install npm packages](#install-npm-packages)
+  - [Executables](#executables)
+    - [Running an EGG program](#running-an-egg-program)
+    - [Parsing an EGG program](#parsing-an-egg-program)
+    - [Running an EGG program via AST (json)](#running-an-egg-program-via-ast-json)
 
 # EGG Language
 
