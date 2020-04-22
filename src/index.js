@@ -9,6 +9,10 @@ function skipComments(string) {
   return string.replace(/^#.*(\n|\r)?/, ''); 
 }
 
+function getProgramSlice() {
+  return lookahead.value + program.slice(0, 10);
+}
+
 let lookahead;
 let lineno = 1; // Save token line numbers
 let offset = 0; // Save token offset
@@ -47,7 +51,7 @@ function lex() {
   } else if (match = COMMA_PARENTHESIS_REGEX.exec(program)) {
     lookahead = {type: "COMMA", value: match[0]};
   } else {
-    throw new SyntaxError("Unexpected syntax: " + program.length);
+    throw new SyntaxError(`Unexpected syntax: ${getProgramSlice()}`);
   }
   program = program.slice(match[0].length); //Trim program
 
@@ -69,7 +73,7 @@ function parseApply(expr) {
     if (lookahead.type === "COMMA") {
       lex(); // Consume COMMA
     } else if (lookahead.type !== "RIGHT_PARENTHESIS") {
-      throw new SyntaxError("Expected ',' or ')'");
+      throw new SyntaxError(`Expected ',' or ')' near '${getProgramSlice()}'`);
     }
   }
 
@@ -93,7 +97,7 @@ function parseExpression() {
     lex();
     return parseApply(expr);
   } else {
-    throw new SyntaxError(`Unexpected syntax line ${lineno}: ${program.slice(0,20)}`);
+    throw new SyntaxError(`Unexpected syntax line ${lineno}: '${getProgramSlice()}'`);
   }
 }
 
@@ -103,7 +107,7 @@ function parse(prog) {
   lex(); // Get first token in lookahead
   let {expr, rest} = parseExpression();
   if (skipSpace(rest).length > 0) {
-    throw new SyntaxError("Unexpected text after program");
+    throw new SyntaxError(`Unexpected text after program: '${getProgramSlice()}'`);
   }
   return expr;
 }
@@ -285,3 +289,6 @@ do(define(x, 4),
 
 // run(`set(quux, true)`);
 // → Some kind of ReferenceError
+
+//console.log(parse("do(b + 4)"));
+// → SyntaxError
