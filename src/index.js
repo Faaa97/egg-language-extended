@@ -6,53 +6,102 @@ function skipSpace(string) {
 
 function skipComments(string) {
   // Replaces comment with nothing, also line terminator if there is one
-  return string.replace(/#.*(\n|\r)?/, ''); 
+  return string.replace(/^#.*(\n|\r)?/, ''); 
 }
 
-function parseApply(expr, program) {
-  program = skipSpace(program);
-  if (program[0] != "(") {
-    return {expr: expr, rest: program};
-  }
+let lookahead;
+let lineno = 1; // Save token line numbers
+let offset = 0; // Save token offset
+let program;
 
-  program = skipSpace(program.slice(1));
-  expr = {type: "apply", operator: expr, args: []};
-  while (program[0] != ")") {
-    let arg = parseExpression(program);
-    expr.args.push(arg.expr);
-    program = skipSpace(arg.rest);
-    if (program[0] == ",") {
-      program = skipSpace(program.slice(1));
-    } else if (program[0] != ")") {
-      throw new SyntaxError("Expected ',' or ')'");
-    }
-  }
-  return parseApply(expr, program.slice(1));
-}
+const STRING_REGEX = /^"([^"]*)"/;
+const NUMBER_REGEX = /^\d+\b/;
+const WORD_REGEX = /^[^\s(),#"]+/;
+const LEFT_PARENTHESIS_REGEX = /^[(]/;
+const RIGHT_PARENTHESIS_REGEX = /^[)]/;
+const COMMA_PARENTHESIS_REGEX = /^,/;
 
-function parseExpression(program) {
+function lex() {
   let comparator;
   // Skip comments and spaces until there is no more
   while (comparator !== program) {
     comparator = program;
     program = skipComments(skipSpace(program));
   }
-  let match, expr;
-  if (match = /^"([^"]*)"/.exec(program)) {
-    expr = {type: "value", value: match[1]};
-  } else if (match = /^\d+\b/.exec(program)) {
-    expr = {type: "value", value: Number(match[0])};
-  } else if (match = /^[^\s(),#"]+/.exec(program)) {
-    expr = {type: "word", name: match[0]};
-  } else {
-    throw new SyntaxError("Unexpected syntax: " + program);
+
+  if(program.length === 0){
+    return {type: 'EOF'};
   }
 
-  return parseApply(expr, program.slice(match[0].length));
+  let match;
+  if (match = STRING_REGEX.exec(program)) {
+    lookahead = {type: "STRING", value: match[1]};
+  } else if (match = NUMBER_REGEX.exec(program)) {
+    lookahead = {type: "NUMBER", value: Number(match[0])};
+  } else if (match = WORD_REGEX.exec(program)) {
+    lookahead = {type: "WORD", value: match[0]};
+  } else if (match = LEFT_PARENTHESIS_REGEX.exec(program)) {
+    lookahead = {type: "LEFT_PARENTHESIS", value: match[0]};
+  } else if (match = RIGHT_PARENTHESIS_REGEX.exec(program)) {
+    lookahead = {type: "RIGHT_PARENTHESIS", value: match[0]};
+  } else if (match = COMMA_PARENTHESIS_REGEX.exec(program)) {
+    lookahead = {type: "COMMA", value: match[0]};
+  } else {
+    throw new SyntaxError("Unexpected syntax: " + program.length);
+  }
+  program = program.slice(match[0].length); //Trim program
+
+  return lookahead;
 }
 
-function parse(program) {
-  let {expr, rest} = parseExpression(program);
+function parseApply(expr) {
+
+  if(lookahead.type != "LEFT_PARENTHESIS") {
+    return {expr: expr, rest: program};
+  }
+  lex(); // Consume LEFT_PARENTHESIS
+
+  expr = {type: "apply", operator: expr, args: []};
+  while (lookahead.type != "RIGHT_PARENTHESIS") {
+    let arg = parseExpression();
+    expr.args.push(arg.expr || arg);
+
+    if (lookahead.type === "COMMA") {
+      lex(); // Consume COMMA
+    } else if (lookahead.type !== "RIGHT_PARENTHESIS") {
+      throw new SyntaxError("Expected ',' or ')'");
+    }
+  }
+
+  lex(); // Consume RIGHT_PARENTHESIS
+  return parseApply(expr);
+}
+
+function parseExpression() {
+  let expr;
+
+  if (lookahead.type == "STRING") {
+    expr = {type: "value", value: lookahead.value};
+    lex();
+    return expr;
+  } else if (lookahead.type == "NUMBER") {
+    expr = {type: "value", value: lookahead.value};
+    lex();
+    return expr;
+  } else if (lookahead.type == "WORD") {
+    expr = {type: "word", name: lookahead.value};
+    lex();
+    return parseApply(expr);
+  } else {
+    throw new SyntaxError(`Unexpected syntax line ${lineno}: ${program.slice(0,20)}`);
+  }
+}
+
+function parse(prog) {
+  debugger;
+  program = prog;
+  lex(); // Get first token in lookahead
+  let {expr, rest} = parseExpression();
   if (skipSpace(rest).length > 0) {
     throw new SyntaxError("Unexpected text after program");
   }
@@ -199,11 +248,13 @@ do(define(total, 0),
             define(count, +(count, 1)))),
    print(total))
 `);
+// → 55
 
 run(`
 do(define(plusOne, fun(a, +(a, 1))),
    print(plusOne(10)))
 `);
+// → 11
 
 run(`
 do(define(pow, fun(base, exp,
@@ -212,6 +263,7 @@ do(define(pow, fun(base, exp,
         *(base, pow(base, -(exp, 1)))))),
    print(pow(2, 10)))
 `);
+// → 1024
 
 // COMMENTS TEST
 console.log(parse("# hello\nx"));
@@ -230,5 +282,6 @@ do(define(x, 4),
    print(x))
 `);
 // → 50
-/* run(`set(quux, true)`); */
+
+// run(`set(quux, true)`);
 // → Some kind of ReferenceError
