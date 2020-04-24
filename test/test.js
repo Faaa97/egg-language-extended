@@ -19,6 +19,6 @@ describe("Testing scopes", function() {
   });
 
   it("testing scope.egg", function(done) {
-    runTest('scope', done);
+    runTest('scope-no-sugar', done);
   });
 });
