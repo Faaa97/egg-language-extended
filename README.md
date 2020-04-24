@@ -7,6 +7,7 @@
   - [Syntax](#syntax)
 - [How to use](#how-to-use)
   - [install npm packages](#install-npm-packages)
+  - [Running tests](#running-tests)
   - [Executables](#executables)
     - [Running an EGG program](#running-an-egg-program)
     - [Parsing an EGG program](#parsing-an-egg-program)
@@ -44,6 +45,14 @@ First install npm packages:
 
 ```console
 $ npm install
+```
+
+## Running tests
+
+You can run all tests available with following command:
+
+```console
+$ npm test
 ```
 
 ## Executables
