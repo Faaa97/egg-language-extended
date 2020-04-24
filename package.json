@@ -1,6 +1,6 @@
 {
   "name": "p5-t1-egg-0-alu0100969535",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Project that defines EGG language, parser and interpreter.",
   "main": "index.js",
   "scripts": {
