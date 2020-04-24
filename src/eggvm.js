@@ -82,7 +82,7 @@ specialForms.set = (args, scope) => {
     }
   }
   // If we get to here, we didn't find any scope for args[0] binding
-  throw new ReferenceError(`Tried setting an undefined variable: ${args[0]}`);
+  throw new ReferenceError(`Tried setting an undefined variable: ${args[0].name}`);
 };
 
 function evaluate(expr, scope) {
