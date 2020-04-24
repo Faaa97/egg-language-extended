@@ -18,5 +18,10 @@
   "homepage": "https://github.com/ULL-ESIT-PL-1920/p5-t1-egg-0-alu0100969535#readme",
   "dependencies": {
     "commander": "^5.0.0"
+  },
+  "devDependencies": {
+    "@ull-esit-pl/example2test": "^1.0.40",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1"
   }
 }
