@@ -1,14 +1,22 @@
 {
-  "name": "p5-t1-egg-0-alu0100969535",
+  "name": "@ull-esit-pl-1920/p5-t1-egg-0-alu0100969535",
   "version": "0.1.1",
   "description": "Project that defines EGG language, parser and interpreter.",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha"
   },
+  "bin": {
+    "egg": "./bin/egg.js",
+    "eggc": "./bin/eggc.js",
+    "evm": "./bin/evm.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ULL-ESIT-PL-1920/p5-t1-egg-0-alu0100969535.git"
+  },
+  "publishConfig": { 
+    "registry": "https://npm.pkg.github.com/" 
   },
   "author": "Felipe Andrés Álvarez Avaria <alu0100969535@ull.edu.es> (https://github.com/alu0100969535)",
   "license": "ISC",
