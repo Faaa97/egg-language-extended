@@ -1,4 +1,5 @@
-// console.log(parse("+(a, 10)"));
+const run = require('./eggvm.js').run;
+const parse = require('./parse.js').parse;
 
 // Fast tests || TODO: Remove and add mocha tests
 run(`
@@ -12,12 +13,6 @@ do(define(total, 0),
 // → 55
 
 run(`
-do(define(plusOne, fun(a, +(a, 1))),
-   print(plusOne(10)))
-`);
-// → 11
-
-run(`
 do(define(pow, fun(base, exp,
      if(==(exp, 0),
         1,
@@ -25,15 +20,6 @@ do(define(pow, fun(base, exp,
    print(pow(2, 10)))
 `);
 // → 1024
-
-// COMMENTS TEST
-console.log(parse("# hello\nx"));
-// → {type: "word", name: "x"}
-
-console.log(parse("a # one\n   # two\n()"));
-// → {type: "apply",
-//    operator: {type: "word", name: "a"},
-//    args: []}
 
 // SCOPE TEST
 run(`
@@ -44,8 +30,5 @@ do(define(x, 4),
 `);
 // → 50
 
-// run(`set(quux, true)`);
+//run(`set(quux, true)`);
 // → Some kind of ReferenceError
-
-//console.log(parse("do(b + 4)"));
-// → SyntaxError
