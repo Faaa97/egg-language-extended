@@ -24,6 +24,15 @@ describe("Testing scopes", () => {
     runTest('scope-no-sugar', done);
   });
 
+  it("set can be used to change variable value", (done) => {
+    runTest('set', done);
+  });
+
+  it("set cannot be used if variable is not defined", () => {
+    const program = `set(quux, true)`;
+    (() => { eggvm.run(program); }).should.throw(/setting.+undefined.+variable/i);
+  });
+
 });
 
 describe("Testing parse", () => {
@@ -61,13 +70,21 @@ describe("Testing parse", () => {
 });
 
 describe("Testing evaluator", () => {
+  it("while", (done) => {
+    runTest('sum-first-10', done);
+  });
+
   it("should be able to define and use functions", (done) => {
     runTest('plusOne', done);
   });
+
+  it("functions can be recursive", (done) => {
+    runTest('pow', done);
+  })
 });
 
 describe("Testing Errors", () => {
-  it("should report errors with line number and offset", () => {
+  it.skip("should report errors with line number and offset", () => {
     let program = fs.readFileSync('examples/scope-err.egg', 'utf8');
     (() => { eggvm.run(program); }).should.throw(/setting.+undefined.+variable/i);
   });

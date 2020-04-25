@@ -4,7 +4,9 @@
   "description": "Project that defines EGG language, parser and interpreter.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "test": "./node_modules/.bin/mocha",
+    "test:watch" : "npm test --watch",
+    "create-test": "cp examples/$FILE test/examples/$FILE && node bin/egg.js test/examples/$FILE > test/examples/$FILE.expected"
   },
   "bin": {
     "egg": "./bin/egg.js",
