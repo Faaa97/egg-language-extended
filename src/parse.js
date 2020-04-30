@@ -5,11 +5,11 @@ let program;
 
 const STRING_REGEX = /"([^"]*)"/y;
 const NUMBER_REGEX = /\d+\b/y;
-const WORD_REGEX = /[^\s(),#"]+/y;
-const LEFT_PARENTHESIS_REGEX = /[(]/y;
-const RIGHT_PARENTHESIS_REGEX = /[)]/y;
+const WORD_REGEX = /[^\s(){},#;"\[\]]+/y;
+const LEFT_PARENTHESIS_REGEX = /[({\[]/y;
+const RIGHT_PARENTHESIS_REGEX = /[)}\]]/y;
 const COMMA_REGEX = /,/y;
-const COMMENT_REGEX = /#.*(\n|\r)?/y;
+const COMMENT_REGEX = /[;#].*(\n|\r)?/y;
 const WHITE_REGEX = /\s+/y;
 
 const TOKENS = [

@@ -34,6 +34,8 @@ specialForms.do = (args, scope) => {
   return value;
 };
 
+specialForms[':='] =
+specialForms.def =
 specialForms.define = (args, scope) => {
   if (args.length != 2 || args[0].type != "word") {
     throw new SyntaxError("Incorrect use of define");
@@ -43,6 +45,7 @@ specialForms.define = (args, scope) => {
   return value;
 };
 
+specialForms['->'] =
 specialForms.fun = (args, scope) => {
   if (!args.length) {
     throw new SyntaxError("Functions need a body");
@@ -67,6 +70,7 @@ specialForms.fun = (args, scope) => {
   };
 };
 
+specialForms['='] =
 specialForms.set = (args, scope) => {
   if (args.length !== 2 || args[0].type !== "word") {
     throw new SyntaxError("Incorrect use of set");
@@ -108,6 +112,7 @@ topScope.length = (array) => {
   return array.length;
 };
 
+topScope['<-'] =
 topScope.element = (array, index) => {
   return array[index];
 };

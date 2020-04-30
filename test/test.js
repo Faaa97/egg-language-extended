@@ -89,6 +89,10 @@ describe("Testing evaluator", () => {
   it("array", (done) => {
     runTest('array', done);
   })
+
+  it("reto", (done) => {
+    runTest('reto', done);
+  })
 });
 
 describe("Testing Errors", () => {
