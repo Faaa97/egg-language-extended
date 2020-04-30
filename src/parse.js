@@ -5,55 +5,68 @@ let lineno = 1; // Save token line numbers
 let offset = 0; // Save token offset
 let program;
 
-const STRING_REGEX = /^"([^"]*)"/;
-const NUMBER_REGEX = /^\d+\b/;
-const WORD_REGEX = /^[^\s(),#"]+/;
-const LEFT_PARENTHESIS_REGEX = /^[(]/;
-const RIGHT_PARENTHESIS_REGEX = /^[)]/;
-const COMMA_PARENTHESIS_REGEX = /^,/;
-const COMMENT_REGEX = /^#.*(\n|\r)?/;
+const STRING_REGEX = /"([^"]*)"/y;
+const NUMBER_REGEX = /\d+\b/y;
+const WORD_REGEX = /[^\s(),#"]+/y;
+const LEFT_PARENTHESIS_REGEX = /[(]/y;
+const RIGHT_PARENTHESIS_REGEX = /[)]/y;
+const COMMA_REGEX = /,/y;
+const COMMENT_REGEX = /#.*(\n|\r)?/y;
+const WHITE_REGEX = /\s+/y;
 
-function updateLineNo(string, index) {
-  const temp =  string.slice(0, index);
-  const count = (temp.match(/(\n|\r)/g) || []).length;
-  lineno += count;
+const TOKENS = [
+  STRING_REGEX,
+  NUMBER_REGEX,
+  WORD_REGEX,
+  LEFT_PARENTHESIS_REGEX,
+  RIGHT_PARENTHESIS_REGEX,
+  COMMA_REGEX,
+];
+
+function updateLastIndex() {
+  TOKENS.forEach((regex) => {
+    regex.lastIndex = offset;
+  });
 }
 
-function skipSpace(string) {
-  const first = string.search(/\S/);
-  if (first === -1) return "";
-  updateLineNo(string, first);
-  offset += first;
-  return string.slice(first);
-}
-
-function skipComments(string) {
-  // Replaces comment with nothing, also line terminator if there is one
-  const match = string.match(COMMENT_REGEX);
+function skipSpace() {
+  WHITE_REGEX.lastIndex = offset;
+  const match = WHITE_REGEX.exec(program);
   if (match) {
-    const length = match[0].length
-    offset += length;
-    lineno += ( match[1] === undefined ) ? 1 : 0;
-    return string.slice(length); 
+    offset = WHITE_REGEX.lastIndex;
+    lineno += (match[0].match(/(\n|\r)/g) || []).length;
   }
-  return string;
+}
+
+function skipComments() {
+  // Replaces comment with nothing, also line terminator if there is one
+  COMMENT_REGEX.lastIndex = offset;
+  const match = COMMENT_REGEX.exec(program);
+  if (match) {
+    offset = COMMENT_REGEX.lastIndex;
+    lineno += ( match[1] === undefined ) ? 1 : 0;
+  }
 }
 
 function getProgramSlice() {
-  return lookahead.value + program.slice(0, 10);
+  return lookahead.value + program.slice(offset, offset + 10);
 }
 
 function lex() {
   let comparator;
   // Skip comments and spaces until there is no more
-  while (comparator !== program) {
-    comparator = program;
-    program = skipComments(skipSpace(program));
+  while (comparator !== offset) {
+    comparator = offset;
+    skipSpace();
+    skipComments();
   }
 
-  if(program.length === 0){
-    return {type: 'EOF'};
+  if(offset === program.length){
+    lookahead = {type: 'EOF'};
+    return lookahead;
   }
+
+  updateLastIndex();
 
   let match;
   if (match = STRING_REGEX.exec(program)) {
@@ -66,20 +79,20 @@ function lex() {
     lookahead = {type: "LEFT_PARENTHESIS", value: match[0]};
   } else if (match = RIGHT_PARENTHESIS_REGEX.exec(program)) {
     lookahead = {type: "RIGHT_PARENTHESIS", value: match[0]};
-  } else if (match = COMMA_PARENTHESIS_REGEX.exec(program)) {
+  } else if (match = COMMA_REGEX.exec(program)) {
     lookahead = {type: "COMMA", value: match[0]};
   } else {
     throw new SyntaxError(`Unexpected syntax at line ${lineno}: ${getProgramSlice()}`);
   }
-  program = program.slice(match[0].length); //Trim program
-
+  //program = program.slice(match[0].length); //Trim program
+  offset += match[0].length;
   return lookahead;
 }
 
 function parseApply(expr) {
 
   if(lookahead.type != "LEFT_PARENTHESIS") {
-    return {expr: expr, rest: program};
+    return {expr: expr, rest: lookahead};
   }
   lex(); // Consume LEFT_PARENTHESIS
 
@@ -102,15 +115,15 @@ function parseApply(expr) {
 function parseExpression() {
   let expr;
 
-  if (lookahead.type == "STRING") {
+  if (lookahead.type === "STRING") {
     expr = {type: "value", value: lookahead.value};
     lex();
     return expr;
-  } else if (lookahead.type == "NUMBER") {
+  } else if (lookahead.type === "NUMBER") {
     expr = {type: "value", value: lookahead.value};
     lex();
     return expr;
-  } else if (lookahead.type == "WORD") {
+  } else if (lookahead.type === "WORD") {
     expr = {type: "word", name: lookahead.value};
     lex();
     return parseApply(expr);
@@ -125,7 +138,7 @@ function parse(prog) {
   offset = 0;
   lex(); // Get first token in lookahead
   let {expr, rest} = parseExpression();
-  if (skipSpace(rest).length > 0) {
+  if (rest.type !== 'EOF') {
     throw new SyntaxError(`Unexpected text after program at line ${lineno}: '${getProgramSlice()}'`);
   }
   return expr;

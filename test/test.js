@@ -67,6 +67,10 @@ describe("Testing parse", () => {
   it("error when unexpected syntax", () => {
     (() => parse("do(b + 4)")).should.throw(/Expected.+near/);
   });
+
+  it("error when text after input", () => {
+    (() => parse("define(x, 4)\nxy")).should.throw(/Unexpected text after program.+/);
+  });
 });
 
 describe("Testing evaluator", () => {
@@ -85,7 +89,7 @@ describe("Testing evaluator", () => {
 
 describe("Testing Errors", () => {
   it.skip("should report errors with line number and offset", () => {
-    let program = fs.readFileSync('examples/scope-err.egg', 'utf8');
-    (() => { eggvm.run(program); }).should.throw(/setting.+undefined.+variable/i);
+    /*let program = fs.readFileSync('examples/scope-err.egg', 'utf8');
+    (() => { eggvm.run(program); }).should.throw(/setting.+undefined.+variable/i);*/
   });
 })
