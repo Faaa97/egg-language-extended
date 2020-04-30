@@ -1,4 +1,5 @@
-let parse = require('./parse.js').parse;
+const parser = require('./parse.js');
+const parse = parser.parse;
 
 const specialForms = Object.create(null);
 
@@ -85,6 +86,32 @@ specialForms.set = (args, scope) => {
   throw new ReferenceError(`Tried setting an undefined variable: ${args[0].name}`);
 };
 
+const topScope = Object.create(null);
+
+topScope.true = true;
+topScope.false = false;
+
+for (let op of ["+", "-", "*", "/", "==", "<", ">"]) {
+  topScope[op] = Function("a, b", `return a ${op} b;`);
+}
+
+topScope.print = value => {
+  console.log(value);
+  return value;
+};
+
+topScope.array = (...values) => {
+  return values;
+};
+
+topScope.length = (array) => {
+  return array.length;
+};
+
+topScope.element = (array, index) => {
+  return array[index];
+};
+
 function evaluate(expr, scope) {
   if (expr.type == "value") {
     return expr.value;
@@ -117,32 +144,6 @@ function run(program) {
 }
 
 function runFromEVM(ast) {
-  const topScope = Object.create(null);
-
-  topScope.true = true;
-  topScope.false = false;
-
-  for (let op of ["+", "-", "*", "/", "==", "<", ">"]) {
-    topScope[op] = Function("a, b", `return a ${op} b;`);
-  }
-
-  topScope.print = value => {
-    console.log(value);
-    return value;
-  };
-
-  topScope.array = (...values) => {
-    return values;
-  };
-
-  topScope.length = (array) => {
-    return array.length;
-  };
-
-  topScope.element = (array, index) => {
-    return array[index];
-  };
-
   return evaluate(ast, Object.create(topScope));
 }
 
@@ -150,8 +151,8 @@ module.exports = {
   run, 
   // runFromFile, // TODO: Make runFromFile
   runFromEVM,
-  // topEnv,      // TopEnv?
+  topEnv: topScope,
   specialForms, 
-  // parser,      // parser?
-  evaluate
+  parser,
+  evaluate,
 };

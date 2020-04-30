@@ -1,9 +1,11 @@
 const program = require('commander');
 const {version} = require('../package.json');
 const runEGG = require('../src/eggvm.js').run;
+const eggRepl = require('../src/egg-repl.js');
 const fs = require('fs');
 
-const description = 'Egg parser and interpreter. Load a .egg file to run';
+const description = 'Egg parser and interpreter. Load a .egg file to run\n' +
+    'If no file is provided, egg-REPL is called';
 
 program
     .version(version)
@@ -25,5 +27,5 @@ if (program.args.length === 1) {
   });
 } else {
   // In case user doesn't specify file to read
-  program.help();
+  eggRepl();
 }

@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 let lookahead;
 let lineno = 1; // Save token line numbers
 let offset = 0; // Save token offset
@@ -133,9 +131,7 @@ function parseExpression() {
 }
 
 function parse(prog) {
-  program = prog;
-  lineno = 1;
-  offset = 0;
+  setProgram(prog);
   lex(); // Get first token in lookahead
   let {expr, rest} = parseExpression();
   if (rest.type !== 'EOF') {
@@ -144,9 +140,48 @@ function parse(prog) {
   return expr;
 }
 
+function setProgram(string) {
+  program = string;
+  lineno = 1;
+  offset = 0;
+}
+
+function getTokens(line) {
+  setProgram(line);
+  let result = [];
+  let token = null;
+  do {
+    try {
+      token = lex();
+      result.push(token);
+    } catch(e) {
+      result.push({type: 'ERROR', value: program});
+      break;
+    }
+  } while(token.type !== 'EOF');
+  return result;
+}
+
+function parBalance(line) {
+  let stack = 0;
+  let tokens = getTokens(line);
+
+  for(let token of tokens) {
+    if(token.type === 'LEFT_PARENTHESIS') {
+      stack++;
+    } else if (token.type === 'RIGHT_PARENTHESIS') {
+      stack--;
+    }
+  }
+  return stack;
+}
+
 module.exports = {
   parse,
   parseApply,
   parseExpression,
+  getTokens,
+  parBalance,
   // parseFromFile, // TODO: make parseFromFile, returns ast
+  WHITE_REGEX,
 };
