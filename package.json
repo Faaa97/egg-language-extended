@@ -1,6 +1,6 @@
 {
   "name": "@ull-esit-pl-1920/p5-t1-egg-0-alu0100969535",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Project that defines EGG language, parser and interpreter.",
   "main": "index.js",
   "scripts": {
