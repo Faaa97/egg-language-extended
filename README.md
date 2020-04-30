@@ -8,6 +8,7 @@
   - [install npm packages](#install-npm-packages)
   - [Running tests](#running-tests)
   - [Executables](#executables)
+    - [Running Egg-REPL](#running-egg-repl)
     - [Running an EGG program](#running-an-egg-program)
     - [Parsing an EGG program](#parsing-an-egg-program)
     - [Running an EGG program via AST (json)](#running-an-egg-program-via-ast-json)
@@ -16,14 +17,14 @@
 
 ## Tokens
 ```js
-WHITES            = /\S/;
-COMMENTS          = /^#.*(\n|\r)?/;
-LEFT_PARENTHESIS  = /^[(]/;
-RIGHT_PARENTHESIS = /^[)]/;
-COMMA_PARENTHESIS = /^,/;
-STRING            = /^"([^"]*)"/;
-NUMBER            = /^\d+\b/;
-WORD              = /^[^\s(),#"]+/;
+WHITES            = /\s/y;
+COMMENTS          = /#.*(\n|\r)?/y;
+LEFT_PARENTHESIS  = /[(]/y;
+RIGHT_PARENTHESIS = /[)]/y;
+COMMA             = /,/y;
+STRING            = /"([^"]*)"/y;
+NUMBER            = /\d+\b/y;
+WORD              = /[^\s(),#"]+/y;
 ```
 
 ## Syntax
@@ -59,6 +60,19 @@ $ npm test
 Then you can use bin/\*.js executables to run examples/\*.egg files, or any other file you create with EGG syntax.
 
 Also you can use -h for help in any of these executables.
+
+### Running Egg-REPL
+If you run `bin/egg.js` without any parameters, a REPL interface will launch up with the same capabilities as egg.js parser and interpreter.
+```console
+$ node bin/egg.js
+> Version 0.5.0
+> help()
+help() muestra esta ayuda.
+exit() sale del bucle REPL.
+Ctrl-D sale del bucle REPL.
+'-------------------------'
+> 
+```
 
 ### Running an EGG program
 
