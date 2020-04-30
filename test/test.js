@@ -85,6 +85,10 @@ describe("Testing evaluator", () => {
   it("functions can be recursive", (done) => {
     runTest('pow', done);
   })
+
+  it("array", (done) => {
+    runTest('array', done);
+  })
 });
 
 describe("Testing Errors", () => {

@@ -131,6 +131,18 @@ function runFromEVM(ast) {
     return value;
   };
 
+  topScope.array = (...values) => {
+    return values;
+  };
+
+  topScope.length = (array) => {
+    return array.length;
+  };
+
+  topScope.element = (array, index) => {
+    return array[index];
+  };
+
   return evaluate(ast, Object.create(topScope));
 }
 
