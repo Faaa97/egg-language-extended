@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "p6-t3-egg-1",
+      "setup": "npm install",
+      "run": "npm test",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": null
+    }
+  ]
+}
