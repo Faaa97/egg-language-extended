@@ -82,7 +82,7 @@ function lex() {
   } else {
     throw new SyntaxError(`Unexpected syntax at line ${lineno}: ${getProgramSlice()}`);
   }
-  //program = program.slice(match[0].length); //Trim program
+
   offset += match[0].length;
   return lookahead;
 }
@@ -115,19 +115,15 @@ function parseExpression() {
 
   if (lookahead.type === "STRING") {
     expr = {type: "value", value: lookahead.value};
-    lex();
-    return expr;
   } else if (lookahead.type === "NUMBER") {
     expr = {type: "value", value: lookahead.value};
-    lex();
-    return expr;
   } else if (lookahead.type === "WORD") {
     expr = {type: "word", name: lookahead.value};
-    lex();
-    return parseApply(expr);
   } else {
     throw new SyntaxError(`Unexpected syntax line ${lineno}: '${getProgramSlice()}'`);
   }
+  lex();
+  return parseApply(expr);
 }
 
 function parse(prog) {

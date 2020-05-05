@@ -29,9 +29,9 @@ WORD              = /[^\s(),#"]+/y;
 
 ## Syntax
 ```js
-expression: STRING 
+expression: ( STRING 
           | NUMBER 
-          | WORD apply 
+          | WORD ) apply 
 
 apply: /* vacio */
      | '(' (expression ',')* expression? ')' apply
