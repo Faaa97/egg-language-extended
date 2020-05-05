@@ -93,6 +93,11 @@ describe("Testing evaluator", () => {
   it("reto", (done) => {
     runTest('reto', done);
   })
+
+  it("cannot use number as func", () => {
+    const program = `4(5)`;
+    (() => { eggvm.run(program); }).should.throw(/applying.+a.+non-function.+/i);
+  });
 });
 
 describe("Testing Errors", () => {
