@@ -100,6 +100,33 @@ describe("Testing evaluator", () => {
   });
 });
 
+describe("run", () => {
+  let originalLog;
+  let expected;
+  let pass = false;
+  beforeEach(() => {
+    originalLog = console.log;
+    console.log = (...args) => { 
+      if(expected === args[0]){
+        pass = true;
+      } else {
+        pass = false;
+        console.log = originalLog;
+      }
+    };
+  });
+  // test code here
+  afterEach(() => {
+    console.log = originalLog;
+  });
+  it("testing one.egg with mocking of console.log", () => {
+    expected = 50;
+    program = fs.readFileSync('examples/one.egg', 'utf8');
+    eggvm.run(program);
+    pass.should.be.equal(true);
+  });
+});
+
 describe("Testing Errors", () => {
   it.skip("should report errors with line number and offset", () => {
     /*let program = fs.readFileSync('examples/scope-err.egg', 'utf8');
