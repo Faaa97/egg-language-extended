@@ -4,6 +4,8 @@ const e2t = require('@ull-esit-pl/example2test');
 const eggvm = require('../src/eggvm.js');
 const parse = require('../src/parse.js').parse;
 
+const {Value, Word, Apply} = require('../src/ast.js');
+
 const runTest = (programName, done) => {
   e2t({
     exampleInput: programName + '.egg',
@@ -38,29 +40,27 @@ describe("Testing scopes", () => {
 describe("Testing parse", () => {
   it("binary operator", () => {
     const result = parse("+(a, 10)");
-    const expected = {
-      type: 'apply',
-      operator: { type: 'word', name: '+' },
-      args: [ { type: 'word', name: 'a' },
-              { type: 'value', value: 10 }
+    const expected = new Apply({
+      operator: new Word({value: '+'}),
+      args: [ new Word({value: 'a'}),
+              new Value({value: 10}),
       ]
-    };
+    });
     result.should.eql(expected);
   });
 
   it("ignores single-line comments", () => {
     const result = parse("# hello\nx");
-    const expected = {type: "word", name: "x"};
+    const expected = new Word({value: "x"});
     result.should.eql(expected);
   });
 
   it("can have comments and spaces mixed", () => {
     const result = parse("a # one\n   # two\n()");
-    const expected = {
-      type: "apply",
-      operator: {type: "word", name: "a"},
-      args: []
-    };
+    const expected = new Apply({
+      operator: new Word({value: "a"}),
+      args: [],
+    });
     result.should.eql(expected);
   });
 
