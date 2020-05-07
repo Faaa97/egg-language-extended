@@ -1,6 +1,6 @@
 # p5-t1-egg-0-alu0100969535 <!-- omit in toc -->
 
-![](https://github.com/ULL-ESIT-PL-1920/p5-t1-egg-0-alu0100969535/workflows/GitHub%20Classroom%20Workflow/badge.svg) ![](https://github.com/ULL-ESIT-PL-1920/p5-t1-egg-0-alu0100969535/workflows/Node.js%20CI%20Workflow/badge.svg) ![](https://github.com/ULL-ESIT-PL-1920/p5-t1-egg-0-alu0100969535/workflows/Publish%20npm%20package/badge.svg)
+![](https://github.com/ULL-ESIT-PL-1920/p6-t3-egg-1-alu0100969535/workflows/GitHub%20Classroom%20Workflow/badge.svg) ![](https://github.com/ULL-ESIT-PL-1920/p6-t3-egg-1-alu0100969535/workflows/Node.js%20CI%20Workflow/badge.svg) ![](https://github.com/ULL-ESIT-PL-1920/p6-t3-egg-1-alu0100969535/workflows/Publish%20npm%20package/badge.svg)
 - [EGG Language](#egg-language)
   - [Tokens](#tokens)
   - [Syntax](#syntax)
