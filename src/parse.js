@@ -1,3 +1,5 @@
+const {Value, Word, Apply} = require('./ast.js');
+
 let lookahead;
 let lineno = 1; // Save token line numbers
 let offset = 0; // Save token offset
@@ -94,7 +96,7 @@ function parseApply(expr) {
   }
   lex(); // Consume LEFT_PARENTHESIS
 
-  expr = {type: "apply", operator: expr, args: []};
+  expr = new Apply({operator: expr, args: []});
   while (lookahead.type != "RIGHT_PARENTHESIS") {
     let arg = parseExpression();
     expr.args.push(arg.expr || arg);
@@ -113,12 +115,10 @@ function parseApply(expr) {
 function parseExpression() {
   let expr;
 
-  if (lookahead.type === "STRING") {
-    expr = {type: "value", value: lookahead.value};
-  } else if (lookahead.type === "NUMBER") {
-    expr = {type: "value", value: lookahead.value};
+  if (lookahead.type === "STRING" || lookahead.type === "NUMBER") {
+    expr = new Value(lookahead);
   } else if (lookahead.type === "WORD") {
-    expr = {type: "word", name: lookahead.value};
+    expr = new Word(lookahead);
   } else {
     throw new SyntaxError(`Unexpected syntax line ${lineno}: '${getProgramSlice()}'`);
   }
