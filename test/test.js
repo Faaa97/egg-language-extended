@@ -6,6 +6,8 @@ const parse = require('../src/parse.js').parse;
 
 const {Value, Word, Apply} = require('../src/ast.js');
 
+const inspect = (x) => JSON.stringify(x, null, 2);
+
 const runTest = (programName, done) => {
   e2t({
     exampleInput: programName + '.egg',
@@ -94,36 +96,28 @@ describe("Testing evaluator", () => {
     runTest('reto', done);
   })
 
-  it("cannot use number as func", () => {
-    const program = `4(5)`;
-    (() => { eggvm.run(program); }).should.throw(/applying.+a.+non-function.+/i);
-  });
 });
 
 describe("run", () => {
   let originalLog;
-  let expected;
-  let pass = false;
+  let results = [];
   beforeEach(() => {
     originalLog = console.log;
+    results = [];
     console.log = (...args) => { 
-      if(expected === args[0]){
-        pass = true;
-      } else {
-        pass = false;
-        console.log = originalLog;
-      }
+      const string = args.join(" ");
+      results.push(string);
     };
   });
-  // test code here
   afterEach(() => {
     console.log = originalLog;
   });
+
   it("testing one.egg with mocking of console.log", () => {
-    expected = 50;
+    const expected = ['50'];
     program = fs.readFileSync('examples/one.egg', 'utf8');
     eggvm.run(program);
-    pass.should.be.equal(true);
+    results.should.be.eql(expected);
   });
 });
 
