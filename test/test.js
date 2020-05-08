@@ -98,7 +98,7 @@ describe("Testing evaluator", () => {
 
 });
 
-describe("run", () => {
+describe.only("run", () => {
   let originalLog;
   let results = [];
   beforeEach(() => {
@@ -132,7 +132,7 @@ describe("run", () => {
     }`;
     eggvm.run(program);
     results.should.be.eql(expected);
-  })
+  });
 
   it("arrays can be accessed with [] operator",  () => {
     const expected = [
@@ -148,7 +148,64 @@ describe("run", () => {
     )`;
     eggvm.run(program);
     results.should.be.eql(expected);
-  })
+  });
+
+  it("js functions can be concatenated",  () => {
+    const expected = [
+      `'1-4-5'`,
+    ];
+    const program = `print(array[1,4,5]("join")("-"))`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+  });
+
+  it("js functions can be called on words",  () => {
+    const expected = [
+      `'HELLO'`,
+    ];
+    const program = `do(
+      def(x, "hello"),
+      print(x("toUpperCase")())
+    )`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+  });
+
+  it("more concatenation",  () => {
+    const expected = [
+      `'A-B-C'`,
+    ];
+    const program = `do{
+      def(x, array["a", "b", "c"]),
+      print(x("join")("-")("toUpperCase")())
+    }`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+  });
+
+  it("even more concatenation",  () => {
+    const expected = [
+      `'1-hello egg'`,
+    ];
+    const program = `do(
+      print(array[1,4,5]("join")("-")("substring")(0,2)("concat")("hello egg"))
+    )`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+  });
+
+  it("can use js map",  () => {
+    const expected = [
+      `[ 2, 3, 4, 5 ]`,
+    ];
+    const program = `do(
+      define(x, array[1,2,3,4]),
+      define(inc, fun(x,i,g, +(x,1))),
+      print(x("map")[inc])
+  )`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+  });
 });
 
 describe("Testing Errors", () => {
