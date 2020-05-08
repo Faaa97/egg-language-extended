@@ -6,7 +6,7 @@ const parse = require('../src/parse.js').parse;
 
 const {Value, Word, Apply} = require('../src/ast.js');
 
-const inspect = (x) => JSON.stringify(x, null, 2);
+const util = require('util');
 
 const runTest = (programName, done) => {
   e2t({
@@ -104,8 +104,9 @@ describe("run", () => {
   beforeEach(() => {
     originalLog = console.log;
     results = [];
-    console.log = (...args) => { 
-      const string = args.join(" ");
+    console.log = (...args) => {
+      const stringified = args.map(arg => util.inspect(arg))
+      const string = stringified.join(" ");
       results.push(string);
     };
   });
@@ -119,6 +120,35 @@ describe("run", () => {
     eggvm.run(program);
     results.should.be.eql(expected);
   });
+
+  it("number and string can be called as applications",  () => {
+    const expected = [
+      `5`,
+      `'4.00'`
+    ];
+    const program = `do {
+      print("hello"("length")),
+      print(4("toFixed")(2))
+    }`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+  })
+
+  it("arrays can be accessed with [] operator",  () => {
+    const expected = [
+      '1',
+      '[ 5, 3 ]',
+      '3'
+    ];
+    const program = `do(
+      def(x, array[1, 4, array[5, 3]]),
+      print(x[0]),   # 1
+      print(x[2]),   # [5, 3]
+      print(x[2][1]) # 3
+    )`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+  })
 });
 
 describe("Testing Errors", () => {
