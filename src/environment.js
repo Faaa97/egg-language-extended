@@ -2,18 +2,17 @@ const registry = require('./registry.js');
 const specialForms = registry.specialForms;
 const topEnv = registry.topEnv;
 
-/* Fills registry items with default reserved words */
+const {Value, Word, Apply} = require('./ast.js');
 
-// TODO: evaluate will be a method of ast items, change accordingly
-// FIXME: Now evaluate is broken...
+/* Fills registry items with default reserved words */
 
 specialForms.if = (args, scope) => {
   if (args.length != 3) {
     throw new SyntaxError("Wrong number of args to if");
-  } else if (evaluate(args[0], scope) !== false) {
-    return evaluate(args[1], scope);
+  } else if (args[0].evaluate(scope) !== false) {
+    return args[1].evaluate(scope);
   } else {
-    return evaluate(args[2], scope);
+    return args[2].evaluate(scope);
   }
 };
 
@@ -21,8 +20,8 @@ specialForms.while = (args, scope) => {
   if (args.length != 2) {
     throw new SyntaxError("Wrong number of args to while");
   }
-  while (evaluate(args[0], scope) !== false) {
-    evaluate(args[1], scope);
+  while (args[0].evaluate(scope) !== false) {
+    args[1].evaluate(scope);
   }
 
   // Since undefined does not exist in Egg, we return false,
@@ -33,7 +32,7 @@ specialForms.while = (args, scope) => {
 specialForms.do = (args, scope) => {
   let value = false;
   for (let arg of args) {
-    value = evaluate(arg, scope);
+    value = arg.evaluate(scope);
   }
   return value;
 };
@@ -41,10 +40,10 @@ specialForms.do = (args, scope) => {
 specialForms[':='] =
 specialForms.def =
 specialForms.define = (args, scope) => {
-  if (args.length != 2 || args[0].type != "word") {
+  if (args.length != 2 || !(args[0] instanceof Word)) {
     throw new SyntaxError("Incorrect use of define");
   }
-  let value = evaluate(args[1], scope);
+  let value = args[1].evaluate(scope);
   scope[args[0].name] = value;
   return value;
 };
@@ -56,7 +55,7 @@ specialForms.fun = (args, scope) => {
   }
   let body = args[args.length - 1];
   let params = args.slice(0, args.length - 1).map(expr => {
-    if (expr.type != "word") {
+    if (!(expr instanceof Word)) {
       throw new SyntaxError("Parameter names must be words");
     }
     return expr.name;
@@ -70,20 +69,20 @@ specialForms.fun = (args, scope) => {
     for (let i = 0; i < arguments.length; i++) {
       localScope[params[i]] = arguments[i];
     }
-    return evaluate(body, localScope);
+    return body.evaluate(localScope);
   };
 };
 
 specialForms['='] =
 specialForms.set = (args, scope) => {
-  if (args.length !== 2 || args[0].type !== "word") {
+  if (args.length !== 2 || !(args[0] instanceof Word)) {
     throw new SyntaxError("Incorrect use of set");
 
   }
   let currentScope = scope;
   while(currentScope !== null) {
     if(Object.prototype.hasOwnProperty.call(currentScope, args[0].name)) {
-      let value = evaluate(args[1], scope); // Evaluate args[1] in original scope for set call
+      let value = args[1].evaluate(scope); // Evaluate args[1] in original scope for set call
       currentScope[args[0].name] = value; // Update binding in its scope
       return value;
     } else {
