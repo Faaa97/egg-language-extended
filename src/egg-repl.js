@@ -34,7 +34,7 @@ function eggRepl() {
       if(stack <= 0 && !ALLWHITE_REGEX.test(program)) {
         try {
           let ast = parse(program);
-          let result = evaluate(ast, topEnv);
+          let result = ast.evaluate(topEnv);
           console.log(ins(result));
         } catch (e) {
           console.log(red(e.message));
