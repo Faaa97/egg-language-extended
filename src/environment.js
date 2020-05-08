@@ -114,8 +114,19 @@ topEnv.length = (array) => {
 };
 
 topEnv['<-'] =
-topEnv.element = (array, index) => {
-  return array[index];
+topEnv.element = (array, ...index) => {
+  const search = function(arr, ...args) {
+    if (args.length === 0) {
+      return arr;
+    }
+    const index = args.shift();
+    if (args.length > 0) {
+      return search(arr[index], ...args);
+    } else {
+      return arr[index];
+    }
+  };
+  return search(array, ...index);
 };
 
 module.exports = {
