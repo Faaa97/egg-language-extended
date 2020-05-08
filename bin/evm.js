@@ -1,6 +1,6 @@
 const program = require('commander');
 const {version} = require('../package.json');
-const runFromEVM = require('../src/eggvm.js').runFromEVM;
+const {runFromEVM, json2AST} = require('../src/eggvm.js');
 const fs = require('fs');
 
 const description = 'Egg interpreter. Load a .evm file to run';
@@ -20,7 +20,8 @@ if (program.args.length === 1) {
     if (err) {
       console.log(err);
     } else {
-      const ast = JSON.parse(eggAst);
+      const obj = JSON.parse(eggAst);
+      const ast = json2AST(obj);
       runFromEVM(ast);
     }
   });

@@ -22,7 +22,7 @@ if (program.args.length === 1) {
       console.log(err);
     } else {
       const ast = parseEGG(eggCode);
-      const json = JSON.stringify(ast, null, 2);
+      const json = JSON.stringify(ast.toObj(), null, 2);
       const outputFile = inputFile + '.evm';
       // Write to output file
       fs.writeFile(outputFile, json, function(err) {

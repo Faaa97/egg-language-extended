@@ -5,6 +5,7 @@ const specialForms = environment.specialForms;
 const topEnv = environment.topEnv;
 
 const parse = parser.parse;
+const json2AST = parser.json2AST;
 
 function run(program) {
   const ast = parse(program);
@@ -22,4 +23,5 @@ module.exports = {
   topEnv,
   specialForms, 
   parser,
+  json2AST,
 };
