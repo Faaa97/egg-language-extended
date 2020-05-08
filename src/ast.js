@@ -51,12 +51,23 @@ class Apply {
     if (this.operator instanceof Word &&
         this.operator.name in specialForms) {
       return specialForms[this.operator.name](this.args, env);
+    } else if (this.operator instanceof Value) { 
+      const value = this.operator.evaluate(env);
+      const prop = this.args[0].evaluate(env); //Ignores other args
+      const target = value[prop];
+      if (target instanceof Function) {
+        return (args) => {
+          return target.call(value, args);
+        };
+      } else {
+        return value[prop];
+      }
     } else {
       let op = this.operator.evaluate(env);
       if (op instanceof Function) {
         return op(...this.args.map(arg => arg.evaluate(env)));
       } else {
-        throw new TypeError("Applying a non-function.");
+        return op[this.args[0].evaluate(env)]; //Ignores other args
       }
     }
   }
