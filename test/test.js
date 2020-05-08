@@ -98,7 +98,7 @@ describe("Testing evaluator", () => {
 
 });
 
-describe.only("run", () => {
+describe("run", () => {
   let originalLog;
   let results = [];
   beforeEach(() => {
