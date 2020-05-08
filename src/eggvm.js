@@ -4,6 +4,8 @@ const environment = require('./environment.js');
 const specialForms = environment.specialForms;
 const topEnv = environment.topEnv;
 
+require('./monkey-patching.js').patch();
+
 const parse = parser.parse;
 const json2AST = parser.json2AST;
 
