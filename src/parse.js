@@ -172,12 +172,25 @@ function parBalance(line) {
   return stack;
 }
 
+function json2AST(obj) {
+  if (obj.type === 'value') {
+    return new Value(obj);
+  } else if (obj.type === 'word') {
+    return new Word({value: obj.name});
+  } else if (obj.type === 'apply') {
+    const op = json2AST(obj.operator);
+    const args = obj.args.map((arg) => json2AST(arg));
+    return new Apply({operator: op, args: args});
+  }
+}
+
 module.exports = {
   parse,
   parseApply,
   parseExpression,
   getTokens,
   parBalance,
+  json2AST,
   // parseFromFile, // TODO: make parseFromFile, returns ast
   WHITE_REGEX,
 };

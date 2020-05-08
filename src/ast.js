@@ -10,6 +10,12 @@ class Value {
   evaluate() {
     return this.value;
   }
+  toObj(){
+    return {
+      type: "value",
+      value: this.value,
+    };
+  }
 }
 
 class Word {
@@ -24,6 +30,12 @@ class Word {
     } else {
       throw new ReferenceError(`Undefined binding: ${this.name}`);
     }
+  }
+  toObj(){
+    return {
+      type: "word",
+      name: this.name,
+    };
   }
 }
 
@@ -47,6 +59,13 @@ class Apply {
         throw new TypeError("Applying a non-function.");
       }
     }
+  }
+  toObj(){
+    return {
+      type: "apply",
+      operator: this.operator.toObj(),
+      args: this.args.map((arg) => arg.toObj()),
+    };
   }
 }
 
