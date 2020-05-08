@@ -221,6 +221,19 @@ describe("run", () => {
     eggvm.run(program);
     results.should.be.eql(expected);
     });
+
+    it("set-multi-sub-array", () => {
+      const expected = [
+        `[ [ 1, 5 ], [ 3, 4 ] ]`,
+      ];
+      const program = `do{
+        :=(w, array[array[1,2], array[3,4]]),
+        w["="](5, 0, 1),
+        print(w)
+      }`;
+      eggvm.run(program);
+      results.should.be.eql(expected);
+      });
   });  
 
 });
