@@ -206,7 +206,25 @@ describe("run", () => {
     eggvm.run(program);
     results.should.be.eql(expected);
   });
+
+  describe("Monkey patching", () => {
+    it("multi-sub-array", () => {
+    const expected = [
+      `4`,
+      `4`,
+    ];
+    const program = `do{
+      define(x, array[1, array[3, 4]]),
+      print(x["sub"](1, 1)),
+      print(element[x, 1, 1])
+    }`;
+    eggvm.run(program);
+    results.should.be.eql(expected);
+    });
+  });  
+
 });
+
 
 describe("Testing Errors", () => {
   it.skip("should report errors with line number and offset", () => {
