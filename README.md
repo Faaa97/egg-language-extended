@@ -1,5 +1,7 @@
 # egg-language-extended <!-- omit in toc -->
 
+Extension of [EloquentJS](https://eloquentjavascript.net/12_language.html) programming language.
+
 - [EGG Language](#egg-language)
   - [Tokens](#tokens)
   - [Syntax](#syntax)
